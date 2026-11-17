@@ -27,7 +27,10 @@ import org.glassfish.grizzly.http2.frames.ErrorCode;
 public final class Http2StreamException extends IOException {
     private final int streamId;
     private final ErrorCode errorCode;
-    
+    // the error has made this side close the stream, which was open until then (and the exception is to be answered
+    // with a RST_STREAM nevertheless), see Http2Session.resetLocally
+    private boolean closedOpenStream;
+
     public Http2StreamException(final int streamId, final ErrorCode errorCode) {
         this.streamId = streamId;
         this.errorCode = errorCode;
@@ -64,7 +67,16 @@ public final class Http2StreamException extends IOException {
     public ErrorCode getErrorCode() {
         return errorCode;
     }
-    
+
+    boolean isClosedOpenStream() {
+        return closedOpenStream;
+    }
+
+    Http2StreamException setClosedOpenStream(final boolean closedOpenStream) {
+        this.closedOpenStream = closedOpenStream;
+        return this;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(128);
