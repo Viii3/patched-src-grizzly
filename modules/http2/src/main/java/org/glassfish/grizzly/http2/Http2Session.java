@@ -526,7 +526,7 @@ public class Http2Session {
      */
     public void setLocalMaxConcurrentStreams(int localMaxConcurrentStreams) {
         this.localMaxConcurrentStreams = localMaxConcurrentStreams;
-        streamsHighWaterMark = Float.valueOf(localMaxConcurrentStreams * 0.5f).intValue();
+        streamsHighWaterMark = Float.valueOf(localMaxConcurrentStreams * http2Configuration.getStreamsHighWaterMark()).intValue();
     }
 
     /**
