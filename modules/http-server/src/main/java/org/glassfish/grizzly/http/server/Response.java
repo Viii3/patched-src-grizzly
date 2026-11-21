@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2008, 2017 Oracle and/or its affiliates. All rights reserved.
  * Copyright 2004 The Apache Software Foundation
+ * Copyright (c) 2026 Payara Foundation and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -273,6 +274,9 @@ public class Response {
         sendFileEnabled = false;
         response = null;
         ctx = null;
+        // Pooled responses live on in ThreadCache; a stale HttpContext would keep the last Http2Stream (and its
+        // session and connection) reachable until this worker thread serves another request.
+        httpContext = null;
         suspendState = SuspendState.NONE;
 
         cacheEnabled = false;

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2017 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2026 Payara Foundation and/or its affiliates.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -37,6 +38,8 @@ public class Termination {
 
     static final Termination RESET_TERMINATION =
             new Termination(TerminationType.RST, "Reset by peer", false);
+
+    static final Termination LOCAL_RESET_TERMINATION = new Termination(TerminationType.RST, "Reset locally", false);
 
     static final Termination UNEXPECTED_FRAME_TERMINATION =
             new Termination(TerminationType.LOCAL_CLOSE, "Unexpected HTTP/2 frame", false);
