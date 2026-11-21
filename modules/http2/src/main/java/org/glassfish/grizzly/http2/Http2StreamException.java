@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2013, 2020 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2026 Payara Foundation and/or its affiliates.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -28,6 +29,9 @@ import org.glassfish.grizzly.http2.frames.ErrorCode;
 public final class Http2StreamException extends IOException {
     private final int streamId;
     private final ErrorCode errorCode;
+    // the error has made this side close the stream, which was open until then (and the exception is to be answered
+    // with a RST_STREAM nevertheless), see Http2Session.resetLocally
+    private boolean closedOpenStream;
 
     public Http2StreamException(final int streamId, final ErrorCode errorCode) {
         this.streamId = streamId;
@@ -61,6 +65,15 @@ public final class Http2StreamException extends IOException {
 
     public ErrorCode getErrorCode() {
         return errorCode;
+    }
+
+    boolean isClosedOpenStream() {
+        return closedOpenStream;
+    }
+
+    Http2StreamException setClosedOpenStream(final boolean closedOpenStream) {
+        this.closedOpenStream = closedOpenStream;
+        return this;
     }
 
     @Override

@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2022 Contributors to the Eclipse Foundation
  * Copyright (c) 2012, 2020 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2026 Payara Foundation and/or its affiliates.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0, which is available at
@@ -144,6 +145,14 @@ class Http2Request extends HttpRequestPacket implements Http2Header {
 
     @Override
     public void recycle() {
+        // Tell the stream before the state is reset: the stream must stop touching this request, which may be reused for
+        // another stream from now on, and a request which never made it to the end of its processing (e.g. rejected by a
+        // filter before the handler) must stop counting toward the requests in progress.
+        final Http2Stream stream = getHttp2Stream();
+        if (stream != null) {
+            stream.onRequestRecycled();
+        }
+
         reset();
 
         ThreadCache.putToCache(CACHE_IDX, this);
